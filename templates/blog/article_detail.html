@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+<div class="layout-grid">
+    <div class="main-content">
+        <article class="card article-detail">
+            <h1>{{ article.title }}
+                {% if article.status == 'draft' %}
+                    <span class="status-badge status-draft">草稿</span>
+                {% endif %}
+            </h1>
+            <div class="article-meta">
+                <span>作者：<a href="#">{{ article.author.username }}</a></span>
+                <span>发布于 {{ article.created_at|date:'Y-m-d H:i' }}</span>
+                {% if article.updated_at != article.created_at %}
+                    <span>更新于 {{ article.updated_at|date:'Y-m-d H:i' }}</span>
+                {% endif %}
+                {% if article.category %}<span class="tag">{{ article.category.name }}</span>{% endif %}
+            </div>
+
+            <div class="article-body">
+                {# rendered_content 已在视图中经过 XSS 过滤，使用 safe 输出 #}
+                {{ rendered_content|safe }}
+            </div>
+
+            {# 文章操作按钮（作者或管理员可见）#}
+            {% if user.is_authenticated and user.is_admin_role or user == article.author %}
+                <div class="article-actions">
+                    <a href="{% url 'blog:article_update' article.pk %}" class="btn btn-secondary btn-sm">编辑</a>
+                    <a href="{% url 'blog:article_delete' article.pk %}" class="btn btn-danger btn-sm"
+                       data-confirm="确定要删除这篇文章吗？此操作不可撤销，文章下所有评论也将被删除。">删除</a>
+                </div>
+            {% endif %}
+        </article>
+
+        {# 评论区 #}
+        <section class="card" id="comments">
+            <div class="card-title">评论 ({{ comments.count }})</div>
+
+            {# 评论提交表单（UC07，需登录）#}
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'comments:create' article.pk %}" style="margin-bottom:20px;">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <textarea name="content" class="form-input" rows="3"
+                                  placeholder="说点什么吧……（1-2000 字符）" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">发表评论</button>
+                </form>
+            {% else %}
+                <div style="background:var(--primary-light);padding:12px 16px;border-radius:5px;margin-bottom:16px;font-size:14px;">
+                    <a href="{% url 'accounts:login' %}?next={{ request.path }}">登录</a> 后即可发表评论。
+                </div>
+            {% endif %}
+
+            {# 评论列表 #}
+            {% for comment in comments %}
+                <div class="comment">
+                    <div class="comment-header">
+                        <div style="display:flex;align-items:center;">
+                            <span class="comment-avatar">{{ comment.author.username|slice:":1"|upper }}</span>
+                            <span class="comment-author">{{ comment.author.username }}</span>
+                        </div>
+                        <div>
+                            <span class="comment-time">{{ comment.created_at|date:'Y-m-d H:i' }}</span>
+                            {% if user.is_authenticated and comment.author == user or user.is_authenticated and user.is_admin_role %}
+                                <a href="{% url 'comments:delete' comment.pk %}" class="btn btn-danger btn-sm"
+                                   style="margin-left:8px;"
+                                   data-confirm="确定要删除这条评论吗？">删除</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="comment-content">{{ comment.content }}</div>
+                </div>
+            {% empty %}
+                <div style="text-align:center;color:var(--text-light);padding:24px;">
+                    还没有评论，来说两句吧～
+                </div>
+            {% endfor %}
+        </section>
+    </div>
+
+    {% include 'blog/_sidebar.html' %}
+</div>
+{% endblock %}

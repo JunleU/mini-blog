@@ -1,0 +1,83 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block admin_title %}仪表盘{% endblock %}
+
+{% block admin_content %}
+<div class="card">
+    <h2 style="margin-bottom:20px;">仪表盘 · 全站数据概览</h2>
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="num">{{ user_count }}</div>
+            <div class="label">注册用户</div>
+        </div>
+        <div class="stat-card">
+            <div class="num">{{ active_user_count }}</div>
+            <div class="label">活跃用户</div>
+        </div>
+        <div class="stat-card">
+            <div class="num">{{ article_count }}</div>
+            <div class="label">文章总数</div>
+        </div>
+        <div class="stat-card">
+            <div class="num">{{ published_count }}</div>
+            <div class="label">已发布</div>
+        </div>
+        <div class="stat-card">
+            <div class="num">{{ draft_count }}</div>
+            <div class="label">草稿</div>
+        </div>
+        <div class="stat-card">
+            <div class="num">{{ comment_count }}</div>
+            <div class="label">评论总数</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">最近文章</div>
+    <table class="data-table">
+        <thead>
+            <tr><th>标题</th><th>作者</th><th>状态</th><th>创建时间</th></tr>
+        </thead>
+        <tbody>
+            {% for a in recent_articles %}
+                <tr>
+                    <td><a href="{% url 'blog:article_detail' a.pk %}">{{ a.title }}</a></td>
+                    <td>{{ a.author.username }}</td>
+                    <td>
+                        {% if a.status == 'published' %}
+                            <span class="status-badge status-published">已发布</span>
+                        {% else %}
+                            <span class="status-badge status-draft">草稿</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ a.created_at|date:'Y-m-d H:i' }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4" style="text-align:center;color:var(--text-light);">暂无文章</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <div class="card-title">最近评论</div>
+    <table class="data-table">
+        <thead>
+            <tr><th>评论者</th><th>内容</th><th>所属文章</th><th>时间</th></tr>
+        </thead>
+        <tbody>
+            {% for c in recent_comments %}
+                <tr>
+                    <td>{{ c.author.username }}</td>
+                    <td>{{ c.content|truncatechars:30 }}</td>
+                    <td><a href="{% url 'blog:article_detail' c.article_id %}">{{ c.article.title|truncatechars:15 }}</a></td>
+                    <td>{{ c.created_at|date:'Y-m-d H:i' }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4" style="text-align:center;color:var(--text-light);">暂无评论</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

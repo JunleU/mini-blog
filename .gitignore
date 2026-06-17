@@ -1,1 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# 虚拟环境
+venv/
+env/
+ENV/
+.venv/
+
+# 环境变量与本地配置
+.env
+*.env
+local_settings.py
+
+# Django 静态收集目录与媒体上传
+staticfiles/
+media/
+
+# SQLite 数据库文件（开发用，不入库）
+db.sqlite3
+db.sqlite3-journal
+
+# MySQL 本地转储
+*.sql.bak
+
+# IDE / 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# 测试与覆盖率
+.coverage
+htmlcov/
+.pytest_cache/
+
+# 日志
+*.log
+
+# 杂项
 other

@@ -1,0 +1,54 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block admin_title %}文章管理{% endblock %}
+
+{% block admin_content %}
+<div class="card">
+    <h2 style="font-size:18px;margin-bottom:18px;">文章管理</h2>
+
+    <div class="search-box">
+        <form method="get">
+            <input type="text" name="q" value="{{ q }}" placeholder="搜索文章标题或作者……">
+            <button type="submit" class="btn btn-primary">搜索</button>
+            {% if q %}<a href="{% url 'admin_panel:article_list' %}" class="btn btn-secondary">重置</a>{% endif %}
+        </form>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th><th>标题</th><th>作者</th><th>分类</th>
+                <th>状态</th><th>评论数</th><th>更新时间</th><th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in page_obj.object_list %}
+                <tr>
+                    <td>{{ a.pk }}</td>
+                    <td><a href="{% url 'blog:article_detail' a.pk %}">{{ a.title|truncatechars:25 }}</a></td>
+                    <td>{{ a.author.username }}</td>
+                    <td>{{ a.category.name|default:'—' }}</td>
+                    <td>
+                        {% if a.status == 'published' %}<span class="status-badge status-published">已发布</span>
+                        {% else %}<span class="status-badge status-draft">草稿</span>{% endif %}
+                    </td>
+                    <td>{{ a.comments.count }}</td>
+                    <td>{{ a.updated_at|date:'Y-m-d H:i' }}</td>
+                    <td class="actions">
+                        <a href="{% url 'admin_panel:article_edit' a.pk %}" class="btn btn-secondary btn-sm">编辑</a>
+                        <form method="post" action="{% url 'admin_panel:article_delete' a.pk %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    data-confirm="确定删除文章《{{ a.title }}》吗？其下评论将一并删除！">删除</button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="8" style="text-align:center;color:var(--text-light);padding:24px;">暂无文章</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% include 'admin_panel/_pagination.html' %}
+</div>
+{% endblock %}

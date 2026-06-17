@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{% block title %}Mini Blog{% endblock %} · Mini Blog</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="{% url 'blog:index' %}" class="navbar-brand">Mini Blog</a>
+            <div class="navbar-nav">
+                <a href="{% url 'blog:index' %}">首页</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'blog:article_create' %}">写文章</a>
+                {% endif %}
+                {% if user.is_authenticated and user.is_admin_role %}
+                    <a href="{% url 'admin_panel:dashboard' %}">后台管理</a>
+                {% endif %}
+            </div>
+            <div class="navbar-right">
+                {% if user.is_authenticated %}
+                    <span class="navbar-user">
+                        {% if user.avatar %}<img src="{{ user.avatar }}" alt="" style="width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-right:4px;">{% endif %}
+                        {{ user.username }}
+                        {% if user.is_admin_role %}<span style="opacity:.8;font-size:12px;">[管理员]</span>{% endif %}
+                    </span>
+                    <a href="{% url 'accounts:profile' %}" class="btn-link">个人中心</a>
+                    <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-link" style="border:none;cursor:pointer;">退出</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn-link">登录</a>
+                    <a href="{% url 'accounts:register' %}" class="btn-link">注册</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- 消息提示 -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="msg msg-{{ message.tags|default:'info' }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- 主内容区 -->
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>Mini Blog · 软件工程与实践课程项目 · 基于 Django &amp; MySQL 构建</p>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}请求不合法{% endblock %}
+{% block content %}
+<div class="error-page">
+    <div class="code">403</div>
+    <div class="msg">请求不合法，请刷新页面后重试</div>
+    <p style="margin-bottom:20px;color:var(--text-light);">
+        这是一个跨站请求伪造（CSRF）防护拦截。请返回上一页重新操作。
+    </p>
+    <a href="{% url 'blog:index' %}" class="btn btn-primary">返回首页</a>
+</div>
+{% endblock %}

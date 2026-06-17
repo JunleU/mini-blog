@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}首页{% endblock %}
+
+{% block content %}
+<div class="layout-grid">
+    <div class="main-content">
+        {% if current_category %}
+            <div class="card" style="padding:16px 24px;">
+                <h2 style="font-size:18px;">分类：{{ current_category.name }}</h2>
+                {% if current_category.description %}
+                    <p style="color:var(--text-light);font-size:14px;">{{ current_category.description }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <div class="search-box">
+            <form method="get" action="{% url 'blog:index' %}">
+                <input type="text" name="q" value="{{ q }}" placeholder="搜索文章标题……">
+                <button type="submit" class="btn btn-primary">搜索</button>
+            </form>
+        </div>
+
+        {% if articles %}
+            {% for article in articles %}
+                <article class="article-card">
+                    <h2>
+                        <a href="{% url 'blog:article_detail' article.pk %}">{{ article.title }}</a>
+                        {% if article.status == 'draft' %}
+                            <span class="status-badge status-draft">草稿</span>
+                        {% endif %}
+                    </h2>
+                    <div class="article-meta">
+                        <span>作者：{{ article.author.username }}</span>
+                        <span>{{ article.created_at|date:'Y-m-d H:i' }}</span>
+                        {% if article.category %}<span class="tag">{{ article.category.name }}</span>{% endif %}
+                    </div>
+                    <p class="article-excerpt">{{ article.excerpt }}</p>
+                    <p style="margin-top:12px;">
+                        <a href="{% url 'blog:article_detail' article.pk %}">阅读全文 →</a>
+                    </p>
+                </article>
+            {% endfor %}
+
+            {# 分页导航 #}
+            {% if is_paginated %}
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}">上一页</a>
+                    {% else %}
+                        <span class="disabled">上一页</span>
+                    {% endif %}
+
+                    {% for n in page_obj.paginator.page_range %}
+                        {% if page_obj.number == n %}
+                            <span class="current">{{ n }}</span>
+                        {% elif n > page_obj.number|add:'-3' and n < page_obj.number|add:'3' %}
+                            <a href="?page={{ n }}{% if q %}&q={{ q }}{% endif %}">{{ n }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}">下一页</a>
+                    {% else %}
+                        <span class="disabled">下一页</span>
+                    {% endif %}
+                    <span>第 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 页</span>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-state">
+                <div class="icon">📝</div>
+                <p>还没有文章，快来发表第一篇吧！</p>
+                {% if user.is_authenticated %}
+                    <p style="margin-top:14px;">
+                        <a href="{% url 'blog:article_create' %}" class="btn btn-primary">写新文章</a>
+                    </p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    {% include 'blog/_sidebar.html' %}
+</div>
+{% endblock %}

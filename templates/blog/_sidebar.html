@@ -1,0 +1,32 @@
+<aside class="sidebar">
+    <div class="card">
+        <div class="card-title">文章分类</div>
+        <ul style="list-style:none;">
+            <li style="margin-bottom:6px;">
+                <a href="{% url 'blog:index' %}">全部文章</a>
+            </li>
+            {% for cat in categories %}
+                <li style="margin-bottom:6px; display:flex; justify-content:space-between;">
+                    <a href="{% url 'blog:category' cat.pk %}">{{ cat.name }}</a>
+                    <span style="color:var(--text-light);font-size:13px;">({{ cat.num_articles }})</span>
+                </li>
+            {% empty %}
+                <li style="color:var(--text-light);font-size:14px;">暂无分类</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% if user.is_authenticated %}
+        <div class="card">
+            <div class="card-title">快捷操作</div>
+            <a href="{% url 'blog:article_create' %}" class="btn btn-primary btn-block" style="margin-bottom:8px;">写新文章</a>
+            <a href="{% url 'accounts:profile' %}" class="btn btn-secondary btn-block">个人中心</a>
+        </div>
+    {% else %}
+        <div class="card">
+            <div class="card-title">加入我们</div>
+            <p style="font-size:14px;color:var(--text-light);margin-bottom:12px;">注册后即可发表文章与评论。</p>
+            <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-block" style="margin-bottom:8px;">立即注册</a>
+            <a href="{% url 'accounts:login' %}" class="btn btn-secondary btn-block">登录</a>
+        </div>
+    {% endif %}
+</aside>

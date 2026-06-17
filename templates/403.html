@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}权限不足{% endblock %}
+{% block content %}
+<div class="error-page">
+    <div class="code">403</div>
+    <div class="msg">您没有权限执行此操作</div>
+    {% if not user.is_authenticated %}
+        <p style="margin-bottom:20px;color:var(--text-light);">请先登录后再尝试访问该页面。</p>
+        <a href="{% url 'accounts:login' %}" class="btn btn-primary">去登录</a>
+    {% else %}
+        <a href="{% url 'blog:index' %}" class="btn btn-primary">返回首页</a>
+    {% endif %}
+</div>
+{% endblock %}
