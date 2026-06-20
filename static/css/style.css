@@ -585,6 +585,30 @@ input.invalid, textarea.invalid, select.invalid { border-color: var(--cinnabar);
     color: var(--ink);
 }
 
+/* ==================== Markdown Content Utility Classes ==================== */
+/* Text alignment */
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+/* Text colors (using design tokens) */
+.text-cinnabar { color: var(--cinnabar); }
+.text-sage { color: var(--sage); }
+.text-light { color: var(--text-light); }
+.text-ink { color: var(--ink); }
+
+/* Font families */
+.font-serif { font-family: var(--font-display); }
+.font-mono { font-family: var(--font-mono); }
+
+/* Font sizes */
+.text-sm { font-size: 13px; }
+.text-lg { font-size: 18px; }
+.text-xl { font-size: 22px; }
+
+/* First-line indent */
+.text-indent { text-indent: 2em; }
+
 .article-actions {
     display: flex;
     gap: 10px;

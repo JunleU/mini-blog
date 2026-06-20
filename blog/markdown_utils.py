@@ -12,22 +12,21 @@ MD_EXTENSIONS = ['extra', 'nl2br', 'sane_lists']
 
 # 允许的 HTML 标签白名单（bleach 过滤后只保留这些）
 ALLOWED_TAGS = [
-    'p', 'br', 'hr', 'span', 'div',
+    'p', 'br', 'hr', 'span', 'div', 'font', 'center',
+    'big', 'small', 'details', 'summary', 'figure', 'figcaption',
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-    'strong', 'b', 'em', 'i', 'u', 's', 'del', 'sub', 'sup', 'mark',
+    'strong', 'b', 'em', 'i', 'u', 'ins', 's', 'del', 'sub', 'sup', 'mark',
     'blockquote', 'code', 'pre', 'kbd',
     'ul', 'ol', 'li', 'dl', 'dt', 'dd',
     'a', 'img',
     'table', 'thead', 'tbody', 'tr', 'th', 'td',
 ]
 
-# 允许的属性白名单
+# 允许的属性白名单（* 表示对所有标签生效）
 ALLOWED_ATTRIBUTES = {
+    '*': ['class'],
     'a': ['href', 'title', 'rel', 'target'],
     'img': ['src', 'alt', 'title', 'width', 'height'],
-    'span': ['class'],
-    'div': ['class'],
-    'code': ['class'],
     'th': ['align'],
     'td': ['align'],
 }
