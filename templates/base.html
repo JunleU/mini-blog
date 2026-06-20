@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
     <title>{% block title %}Mini Blog{% endblock %} · Mini Blog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_head %}{% endblock %}
 </head>
@@ -13,7 +15,7 @@
     <!-- 顶部导航栏 -->
     <nav class="navbar">
         <div class="navbar-container">
-            <a href="{% url 'blog:index' %}" class="navbar-brand">Mini Blog</a>
+            <a href="{% url 'blog:index' %}" class="navbar-brand"><span class="brand-light">Mini</span> Blog</a>
             <div class="navbar-nav">
                 <a href="{% url 'blog:index' %}">首页</a>
                 {% if user.is_authenticated %}
@@ -26,7 +28,7 @@
             <div class="navbar-right">
                 {% if user.is_authenticated %}
                     <span class="navbar-user">
-                        {% if user.avatar %}<img src="{{ user.avatar }}" alt="" style="width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-right:4px;">{% endif %}
+                        {% if user.avatar %}<img src="{{ user.avatar.url }}" alt="" style="width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-right:4px;object-fit:cover;">{% endif %}
                         {{ user.username }}
                         {% if user.is_admin_role %}<span style="opacity:.8;font-size:12px;">[管理员]</span>{% endif %}
                     </span>
@@ -59,7 +61,7 @@
 
     <!-- 页脚 -->
     <footer class="footer">
-        <p>Mini Blog · 软件工程与实践课程项目 · 基于 Django &amp; MySQL 构建</p>
+        <p>Mini Blog · 软件工程与实践课程项目</p>
     </footer>
 
     <script src="{% static 'js/main.js' %}"></script>

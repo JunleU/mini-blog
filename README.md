@@ -189,13 +189,11 @@ gunicorn miniblog.wsgi:application --bind 127.0.0.1:8000 --workers 3
 
 1. **数据库**：开发环境默认 SQLite（便于零配置启动），通过环境变量切换 MySQL，
    对应 SAD §3.2 的 MySQL 规划。
-2. **头像字段**：因环境未安装 Pillow，`User.avatar` 采用 `URLField`（存头像 URL）
-   替代 `ImageField`，功能等价。
-3. **后台管理**：`admin_panel` 模块为面向管理员角色的独立管理界面
+2. **后台管理**：`admin_panel` 模块为面向管理员角色的独立管理界面
    （对应 SRS UC08-UC10），同时保留 Django 内置 admin（路径改为 `/dj-admin/`）
    作为补充手段。
-4. **文章正文**：支持 Markdown 语法（SRS UC03），渲染时用 bleach 做 XSS 过滤。
-5. **虚拟环境**: 可不使用 conda ，选用更轻量的 Python 内置模块 venv
+3. **文章正文**：支持 Markdown 语法（SRS UC03），渲染时用 bleach 做 XSS 过滤。
+4. **虚拟环境**: 可不使用 conda ，选用更轻量的 Python 内置模块 venv
 
 ## 项目文档
 

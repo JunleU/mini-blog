@@ -80,7 +80,7 @@ def logout_view(request):
 def profile(request):
     """UC11 管理个人信息 —— 修改邮箱/简介/头像。"""
     if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=request.user)
+        form = ProfileForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, '个人信息已更新。')

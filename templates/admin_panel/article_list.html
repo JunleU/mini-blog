@@ -4,7 +4,7 @@
 
 {% block admin_content %}
 <div class="card">
-    <h2 style="font-size:18px;margin-bottom:18px;">文章管理</h2>
+    <h2 style="font-family:var(--font-display);font-size:18px;margin-bottom:18px;">文章管理</h2>
 
     <div class="search-box">
         <form method="get">
@@ -17,15 +17,15 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th>ID</th><th>标题</th><th>作者</th><th>分类</th>
-                <th>状态</th><th>评论数</th><th>更新时间</th><th>操作</th>
+                <th>ID</th><th class="col-title">标题</th><th>作者</th><th>分类</th>
+                <th>状态</th><th class="col-count">评论数</th><th>更新时间</th><th class="col-actions">操作</th>
             </tr>
         </thead>
         <tbody>
             {% for a in page_obj.object_list %}
                 <tr>
                     <td>{{ a.pk }}</td>
-                    <td><a href="{% url 'blog:article_detail' a.pk %}">{{ a.title|truncatechars:25 }}</a></td>
+                    <td class="col-title"><a href="{% url 'blog:article_detail' a.pk %}">{{ a.title|truncatechars:25 }}</a></td>
                     <td>{{ a.author.username }}</td>
                     <td>{{ a.category.name|default:'—' }}</td>
                     <td>
@@ -34,11 +34,11 @@
                     </td>
                     <td>{{ a.comments.count }}</td>
                     <td>{{ a.updated_at|date:'Y-m-d H:i' }}</td>
-                    <td class="actions">
-                        <a href="{% url 'admin_panel:article_edit' a.pk %}" class="btn btn-secondary btn-sm">编辑</a>
+                    <td class="col-actions">
+                        <a href="{% url 'admin_panel:article_edit' a.pk %}" class="action-link">编辑</a>
                         <form method="post" action="{% url 'admin_panel:article_delete' a.pk %}" style="display:inline;">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-danger btn-sm"
+                            <button type="submit" class="action-link danger"
                                     data-confirm="确定删除文章《{{ a.title }}》吗？其下评论将一并删除！">删除</button>
                         </form>
                     </td>

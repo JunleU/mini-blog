@@ -5,7 +5,7 @@
 {% block admin_content %}
 <div style="max-width:520px;margin:0 auto;">
     <div class="card">
-        <h2 style="margin-bottom:20px;">编辑用户 · {{ target_user.username }}</h2>
+        <h2 style="font-family:var(--font-display);font-size:18px;margin-bottom:20px;">编辑用户 · {{ target_user.username }}</h2>
         <form method="post">
             {% csrf_token %}
             <div class="form-group">

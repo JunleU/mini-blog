@@ -6,13 +6,21 @@
 <div class="admin-layout">
     <aside class="admin-sidebar">
         <a href="{% url 'admin_panel:dashboard' %}"
-           class="{% if section == 'dashboard' %}active{% endif %}">📊 仪表盘</a>
+           class="{% if section == 'dashboard' %}active{% endif %}">
+            <span class="nav-icon icon-dashboard"></span>仪表盘
+        </a>
         <a href="{% url 'admin_panel:user_list' %}"
-           class="{% if section == 'users' %}active{% endif %}">👥 用户管理</a>
+           class="{% if section == 'users' %}active{% endif %}">
+            <span class="nav-icon icon-users"></span>用户管理
+        </a>
         <a href="{% url 'admin_panel:article_list' %}"
-           class="{% if section == 'articles' %}active{% endif %}">📄 文章管理</a>
+           class="{% if section == 'articles' %}active{% endif %}">
+            <span class="nav-icon icon-articles"></span>文章管理
+        </a>
         <a href="{% url 'admin_panel:comment_list' %}"
-           class="{% if section == 'comments' %}active{% endif %}">💬 评论管理</a>
+           class="{% if section == 'comments' %}active{% endif %}">
+            <span class="nav-icon icon-comments"></span>评论管理
+        </a>
     </aside>
     <div class="main-content">
         {% block admin_content %}{% endblock %}

@@ -13,7 +13,12 @@
                 {% endif %}
             </h1>
             <div class="article-meta">
-                <span>作者：<a href="#">{{ article.author.username }}</a></span>
+                <span>
+                    {% if article.author.avatar %}
+                        <img src="{{ article.author.avatar.url }}" alt="" class="author-avatar">
+                    {% endif %}
+                    {{ article.author.username }}
+                </span>
                 <span>发布于 {{ article.created_at|date:'Y-m-d H:i' }}</span>
                 {% if article.updated_at != article.created_at %}
                     <span>更新于 {{ article.updated_at|date:'Y-m-d H:i' }}</span>
@@ -29,8 +34,8 @@
             {# 文章操作按钮（作者或管理员可见）#}
             {% if user.is_authenticated and user.is_admin_role or user == article.author %}
                 <div class="article-actions">
-                    <a href="{% url 'blog:article_update' article.pk %}" class="btn btn-secondary btn-sm">编辑</a>
-                    <a href="{% url 'blog:article_delete' article.pk %}" class="btn btn-danger btn-sm"
+                    <a href="{% url 'blog:article_update' article.pk %}" class="action-link">编辑</a>
+                    <a href="{% url 'blog:article_delete' article.pk %}" class="action-link danger"
                        data-confirm="确定要删除这篇文章吗？此操作不可撤销，文章下所有评论也将被删除。">删除</a>
                 </div>
             {% endif %}
@@ -42,7 +47,7 @@
 
             {# 评论提交表单（UC07，需登录）#}
             {% if user.is_authenticated %}
-                <form method="post" action="{% url 'comments:create' article.pk %}" style="margin-bottom:20px;">
+                <form method="post" action="{% url 'comments:create' article.pk %}" style="margin-bottom:24px;">
                     {% csrf_token %}
                     <div class="form-group">
                         <textarea name="content" class="form-input" rows="3"
@@ -51,7 +56,7 @@
                     <button type="submit" class="btn btn-primary btn-sm">发表评论</button>
                 </form>
             {% else %}
-                <div style="background:var(--primary-light);padding:12px 16px;border-radius:5px;margin-bottom:16px;font-size:14px;">
+                <div style="background:var(--paper-warm);padding:14px 18px;border-radius:var(--radius);margin-bottom:20px;font-size:14px;border:1px solid var(--border-light);">
                     <a href="{% url 'accounts:login' %}?next={{ request.path }}">登录</a> 后即可发表评论。
                 </div>
             {% endif %}
@@ -61,14 +66,19 @@
                 <div class="comment">
                     <div class="comment-header">
                         <div style="display:flex;align-items:center;">
-                            <span class="comment-avatar">{{ comment.author.username|slice:":1"|upper }}</span>
+                            <span class="comment-avatar">
+                                {% if comment.author.avatar %}
+                                    <img src="{{ comment.author.avatar.url }}" alt="">
+                                {% else %}
+                                    {{ comment.author.username|slice:":1"|upper }}
+                                {% endif %}
+                            </span>
                             <span class="comment-author">{{ comment.author.username }}</span>
                         </div>
-                        <div>
+                        <div style="display:flex;align-items:center;gap:8px;">
                             <span class="comment-time">{{ comment.created_at|date:'Y-m-d H:i' }}</span>
                             {% if user.is_authenticated and comment.author == user or user.is_authenticated and user.is_admin_role %}
-                                <a href="{% url 'comments:delete' comment.pk %}" class="btn btn-danger btn-sm"
-                                   style="margin-left:8px;"
+                                <a href="{% url 'comments:delete' comment.pk %}" class="action-link danger"
                                    data-confirm="确定要删除这条评论吗？">删除</a>
                             {% endif %}
                         </div>
@@ -76,7 +86,7 @@
                     <div class="comment-content">{{ comment.content }}</div>
                 </div>
             {% empty %}
-                <div style="text-align:center;color:var(--text-light);padding:24px;">
+                <div style="text-align:center;color:var(--text-light);padding:28px;font-size:14px;">
                     还没有评论，来说两句吧～
                 </div>
             {% endfor %}

@@ -3,16 +3,43 @@
 {% block title %}个人中心{% endblock %}
 
 {% block content %}
-<div style="max-width:560px;margin:10px auto;">
+<div style="max-width:580px;margin:16px auto;">
     <div class="card">
-        <h2 style="margin-bottom:8px;">个人中心</h2>
-        <p style="color:var(--text-light);font-size:14px;margin-bottom:20px;">
-            当前账号：<strong>{{ user.username }}</strong>
-            {% if user.is_admin_role %}<span class="status-badge status-published">管理员</span>{% endif %}
-            · 注册于 {{ user.date_joined|date:'Y-m-d' }}
-        </p>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
+
+            {# 头部：头像 + 用户名 + 角色 + 更改图片按钮 #}
+            <div class="profile-header" style="border-bottom:none;padding-bottom:0;margin-bottom:0;">
+                <div style="display:flex;align-items:flex-start;gap:26px;">
+                    <div class="profile-header-avatar">
+                        {% if user.avatar %}
+                            <div class="profile-avatar-lg" id="avatarPreview">
+                                <img src="{{ user.avatar.url }}" alt="头像">
+                            </div>
+                        {% else %}
+                            <div class="profile-avatar-lg" id="avatarPreview">{{ user.username|slice:":1"|upper }}</div>
+                        {% endif %}
+                        <label for="{{ form.avatar.id_for_label }}" class="avatar-edit-btn" aria-label="更改头像">
+                            <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2l3 3-7 9H2v-4l7-9z"/>
+                                <path d="M10 4l3 3"/>
+                            </svg>
+                        </label>
+                        {{ form.avatar }}
+                    </div>
+                    <div>
+                        <h2 style="font-family:var(--font-display);font-size:20px;margin-bottom:4px;">{{ user.username }}
+                            {% if user.is_admin_role %}<span class="status-badge status-published">管理员</span>{% endif %}
+                        </h2>
+                        <p style="color:var(--text-light);font-size:13px;">
+                            注册于 {{ user.date_joined|date:'Y-m-d' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {# 基本信息区 #}
+            <div class="form-section-title">基本信息</div>
             <div class="form-group">
                 <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
                 {{ form.email }}
@@ -22,12 +49,9 @@
                 <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
                 {{ form.bio }}
             </div>
-            <div class="form-group">
-                <label for="{{ form.avatar.id_for_label }}">{{ form.avatar.label }}</label>
-                {{ form.avatar }}
-                <div class="field-help">填写头像图片的 URL 地址（可选）。当前头像将显示在导航栏。</div>
-                {% for e in form.avatar.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
-            </div>
+
+            {% for e in form.avatar.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">保存资料</button>
                 <a href="{% url 'accounts:change_password' %}" class="btn btn-secondary">修改密码</a>
@@ -39,17 +63,46 @@
     <div class="card">
         <div class="card-title">我的文章 ({{ user.articles.count }})</div>
         {% for article in user.articles.all %}
-            <div style="padding:10px 0;border-bottom:1px solid var(--border);">
-                <a href="{% url 'blog:article_detail' article.pk %}">{{ article.title }}</a>
-                {% if article.status == 'draft' %}<span class="status-badge status-draft">草稿</span>{% endif %}
-                <span style="float:right;color:var(--text-light);font-size:13px;">{{ article.updated_at|date:'Y-m-d' }}</span>
+            <div style="padding:10px 0;border-bottom:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <a href="{% url 'blog:article_detail' article.pk %}">{{ article.title }}</a>
+                    {% if article.status == 'draft' %}<span class="status-badge status-draft">草稿</span>{% endif %}
+                </div>
+                <span style="color:var(--text-light);font-size:13px;">{{ article.updated_at|date:'Y-m-d' }}</span>
             </div>
         {% empty %}
-            <div style="color:var(--text-light);padding:12px 0;">
+            <div style="color:var(--text-light);padding:16px 0;font-size:14px;">
                 您还没有发表文章，
                 <a href="{% url 'blog:article_create' %}">立即写一篇 →</a>
             </div>
         {% endfor %}
     </div>
 </div>
+
+<script>
+// 头像文件选择预览
+(function() {
+    var input = document.getElementById('{{ form.avatar.id_for_label }}');
+    var preview = document.getElementById('avatarPreview');
+    if (!input) return;
+    input.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var existingImg = preview.querySelector('img');
+                if (existingImg) {
+                    existingImg.src = e.target.result;
+                } else {
+                    preview.textContent = '';
+                    var img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = '头像';
+                    preview.appendChild(img);
+                }
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+})();
+</script>
 {% endblock %}

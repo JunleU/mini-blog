@@ -2,13 +2,13 @@
     <div class="card">
         <div class="card-title">文章分类</div>
         <ul style="list-style:none;">
-            <li style="margin-bottom:6px;">
+            <li style="margin-bottom:8px;">
                 <a href="{% url 'blog:index' %}">全部文章</a>
             </li>
             {% for cat in categories %}
-                <li style="margin-bottom:6px; display:flex; justify-content:space-between;">
+                <li style="margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
                     <a href="{% url 'blog:category' cat.pk %}">{{ cat.name }}</a>
-                    <span style="color:var(--text-light);font-size:13px;">({{ cat.num_articles }})</span>
+                    <span style="color:var(--text-light);font-size:12px;">({{ cat.num_articles }})</span>
                 </li>
             {% empty %}
                 <li style="color:var(--text-light);font-size:14px;">暂无分类</li>
@@ -24,7 +24,7 @@
     {% else %}
         <div class="card">
             <div class="card-title">加入我们</div>
-            <p style="font-size:14px;color:var(--text-light);margin-bottom:12px;">注册后即可发表文章与评论。</p>
+            <p style="font-size:13px;color:var(--text-light);margin-bottom:14px;line-height:1.6;">注册后即可发表文章与评论。</p>
             <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-block" style="margin-bottom:8px;">立即注册</a>
             <a href="{% url 'accounts:login' %}" class="btn btn-secondary btn-block">登录</a>
         </div>

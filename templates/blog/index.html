@@ -8,9 +8,9 @@
     <div class="main-content">
         {% if current_category %}
             <div class="card" style="padding:16px 24px;">
-                <h2 style="font-size:18px;">分类：{{ current_category.name }}</h2>
+                <h2 style="font-family:var(--font-display);font-size:18px;">分类：{{ current_category.name }}</h2>
                 {% if current_category.description %}
-                    <p style="color:var(--text-light);font-size:14px;">{{ current_category.description }}</p>
+                    <p style="color:var(--text-light);font-size:14px;margin-top:4px;">{{ current_category.description }}</p>
                 {% endif %}
             </div>
         {% endif %}
@@ -32,7 +32,12 @@
                         {% endif %}
                     </h2>
                     <div class="article-meta">
-                        <span>作者：{{ article.author.username }}</span>
+                        <span>
+                            {% if article.author.avatar %}
+                                <img src="{{ article.author.avatar.url }}" alt="" class="author-avatar" style="width:20px;height:20px;">
+                            {% endif %}
+                            {{ article.author.username }}
+                        </span>
                         <span>{{ article.created_at|date:'Y-m-d H:i' }}</span>
                         {% if article.category %}<span class="tag">{{ article.category.name }}</span>{% endif %}
                     </div>
@@ -65,15 +70,15 @@
                     {% else %}
                         <span class="disabled">下一页</span>
                     {% endif %}
-                    <span>第 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 页</span>
+                    <span style="color:var(--text-light);font-size:13px;">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
                 </div>
             {% endif %}
         {% else %}
             <div class="empty-state">
-                <div class="icon">📝</div>
+                <div class="icon">✍️</div>
                 <p>还没有文章，快来发表第一篇吧！</p>
                 {% if user.is_authenticated %}
-                    <p style="margin-top:14px;">
+                    <p style="margin-top:16px;">
                         <a href="{% url 'blog:article_create' %}" class="btn btn-primary">写新文章</a>
                     </p>
                 {% endif %}

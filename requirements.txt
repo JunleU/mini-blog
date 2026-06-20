@@ -16,5 +16,5 @@ webencodings==0.5.1
 # 如无法安装 mysqlclient，可改用纯 Python 驱动：
 # PyMySQL==1.1.1        # 并在 miniblog/__init__.py 中加 pymysql.install_as_MySQLdb()
 
-# 以下为可选依赖：
-# Pillow==10.2.0        # 若启用 ImageField 上传头像，需安装此包
+# 头像上传所需
+Pillow==10.2.0

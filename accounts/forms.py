@@ -143,15 +143,17 @@ class UserLoginForm(forms.Form):
 class ProfileForm(forms.ModelForm):
     """个人信息修改表单（UC11）——修改邮箱、简介、头像。"""
 
+    # 头像上传限制：2MB，仅允许常见图片格式
+    AVATAR_MAX_SIZE = 2 * 1024 * 1024  # 2MB
+    AVATAR_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+
     class Meta:
         model = User
         fields = ['email', 'bio', 'avatar']
         widgets = {
             'email': forms.EmailInput(attrs={'class': 'form-input'}),
             'bio': forms.Textarea(attrs={'class': 'form-input', 'rows': 3}),
-            'avatar': forms.URLInput(
-                attrs={'class': 'form-input', 'placeholder': '头像图片 URL（可选）'}
-            ),
+            'avatar': forms.FileInput(attrs={'accept': 'image/*'}),
         }
 
     def clean_email(self):
@@ -160,6 +162,25 @@ class ProfileForm(forms.ModelForm):
         if email and User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
             raise ValidationError('该邮箱已被注册。')
         return email
+
+    def clean_avatar(self):
+        avatar = self.cleaned_data.get('avatar')
+        # None 表示未上传新文件
+        if avatar is None:
+            return avatar
+        # 文件大小校验
+        if hasattr(avatar, 'size') and avatar.size > self.AVATAR_MAX_SIZE:
+            raise ValidationError(f'头像文件大小不能超过 2MB（当前 {avatar.size // 1024}KB）。')
+        # MIME 类型校验
+        if hasattr(avatar, 'content_type') and avatar.content_type not in self.AVATAR_ALLOWED_TYPES:
+            raise ValidationError('仅支持 JPEG、PNG、GIF、WebP 格式的图片。')
+        return avatar
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+        return user
 
 
 class PasswordChangeForm(forms.Form):

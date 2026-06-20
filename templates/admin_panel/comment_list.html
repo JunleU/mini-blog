@@ -4,7 +4,7 @@
 
 {% block admin_content %}
 <div class="card">
-    <h2 style="font-size:18px;margin-bottom:18px;">评论管理</h2>
+    <h2 style="font-family:var(--font-display);font-size:18px;margin-bottom:18px;">评论管理</h2>
 
     <div class="search-box">
         <form method="get">
@@ -17,22 +17,22 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th>ID</th><th>评论者</th><th>内容</th><th>所属文章</th>
-                <th>时间</th><th>操作</th>
+                <th>ID</th><th class="col-nowrap">评论者</th><th>内容</th><th>所属文章</th>
+                <th>时间</th><th class="col-actions">操作</th>
             </tr>
         </thead>
         <tbody>
             {% for c in page_obj.object_list %}
                 <tr>
                     <td>{{ c.pk }}</td>
-                    <td>{{ c.author.username }}</td>
+                    <td class="col-nowrap">{{ c.author.username }}</td>
                     <td style="max-width:280px;">{{ c.content|truncatechars:40 }}</td>
                     <td><a href="{% url 'blog:article_detail' c.article_id %}">{{ c.article.title|truncatechars:15 }}</a></td>
                     <td>{{ c.created_at|date:'Y-m-d H:i' }}</td>
-                    <td class="actions">
+                    <td class="col-actions">
                         <form method="post" action="{% url 'admin_panel:comment_delete' c.pk %}" style="display:inline;">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-danger btn-sm"
+                            <button type="submit" class="action-link danger"
                                     data-confirm="确定删除该评论吗？">删除</button>
                         </form>
                     </td>

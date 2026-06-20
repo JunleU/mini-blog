@@ -5,7 +5,7 @@
 {% block admin_content %}
 <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
-        <h2 style="font-size:18px;">用户管理</h2>
+        <h2 style="font-family:var(--font-display);font-size:18px;">用户管理</h2>
     </div>
 
     <div class="search-box">
@@ -20,7 +20,7 @@
         <thead>
             <tr>
                 <th>ID</th><th>用户名</th><th>邮箱</th><th>角色</th>
-                <th>状态</th><th>文章数</th><th>注册时间</th><th>操作</th>
+                <th>状态</th><th class="col-count">文章数</th><th>注册时间</th><th class="col-actions">操作</th>
             </tr>
         </thead>
         <tbody>
@@ -34,27 +34,27 @@
                         {% else %}<span class="tag">普通用户</span>{% endif %}
                     </td>
                     <td>
-                        {% if u.is_active %}<span style="color:var(--success);">启用</span>
-                        {% else %}<span style="color:var(--danger);">禁用</span>{% endif %}
+                        {% if u.is_active %}<span style="color:var(--sage);">启用</span>
+                        {% else %}<span style="color:var(--cinnabar);">禁用</span>{% endif %}
                     </td>
                     <td>{{ u.articles.count }}</td>
                     <td>{{ u.date_joined|date:'Y-m-d' }}</td>
-                    <td class="actions">
-                        <a href="{% url 'admin_panel:user_edit' u.pk %}" class="btn btn-secondary btn-sm">编辑</a>
+                    <td class="col-actions">
+                        <a href="{% url 'admin_panel:user_edit' u.pk %}" class="action-link">编辑</a>
                         {% if u != request.user %}
                             <form method="post" action="{% url 'admin_panel:user_toggle' u.pk %}" style="display:inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-secondary btn-sm">
+                                <button type="submit" class="action-link">
                                     {% if u.is_active %}禁用{% else %}启用{% endif %}
                                 </button>
                             </form>
                             <form method="post" action="{% url 'admin_panel:user_delete' u.pk %}" style="display:inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-danger btn-sm"
+                                <button type="submit" class="action-link danger"
                                         data-confirm="确定删除用户 {{ u.username }} 吗？其所有文章和评论将一并删除！">删除</button>
                         </form>
                         {% else %}
-                            <span style="color:var(--text-light);font-size:12px;">（当前账号）</span>
+                            <span style="color:var(--text-light);font-size:12px;">当前账号</span>
                         {% endif %}
                     </td>
                 </tr>

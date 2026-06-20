@@ -1,7 +1,7 @@
 """用户模块数据模型（M01）。
 
 定义自定义用户模型 User，扩展 Django 内置 AbstractUser，
-新增 role（角色）、bio（个人简介）、avatar（头像 URL）字段。
+新增 role（角色）、bio（个人简介）、avatar（头像）字段。
 
 依据：SAD §4.2.4 User；SRS §3.6 数据字典。
 """
@@ -17,8 +17,8 @@ class User(AbstractUser):
     is_active / is_staff 等标准字段，并扩展：
       - role：角色（author 普通作者 / admin 系统管理员）
       - bio：个人简介
-      - avatar：头像 URL（采用 URLField 而非 ImageField，避免 Pillow
-        等二进制依赖；存储外部头像链接或静态资源路径）
+      - avatar：头像（ImageField，上传至 media/avatars/，限制 2MB，
+        支持 JPEG/PNG/GIF/WebP）
 
     密码以 PBKDF2 + SHA256 哈希加盐存储（Django 默认），不保存明文。
     """
@@ -32,7 +32,10 @@ class User(AbstractUser):
         '角色', max_length=10, choices=Role.choices, default=Role.AUTHOR
     )
     bio = models.CharField('个人简介', max_length=500, blank=True, default='')
-    avatar = models.URLField('头像 URL', max_length=500, blank=True, default='')
+    avatar = models.ImageField(
+        '头像', upload_to='avatars/', blank=True, default='',
+        help_text='支持 JPEG/PNG/GIF/WebP，最大 2MB',
+    )
 
     class Meta:
         verbose_name = '用户'
